@@ -1,0 +1,8 @@
+This is a test file for the rfile
+sep string test
+to see if we can -- load multiple "lines" - and use a different sep string than the $/ default one.
+--
+--
+so here we see if this is line 4 or not.
+
+--
