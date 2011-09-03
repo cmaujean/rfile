@@ -1,5 +1,3 @@
-# $Id: gemspec 55 2006-08-16 22:04:22Z erikh $
-
 require 'rubygems'
 require 'rake'
 $:.unshift 'lib'

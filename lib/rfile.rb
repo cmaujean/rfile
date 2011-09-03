@@ -1,6 +1,3 @@
-# $Id: rfile.rb 61 2006-08-19 22:34:59Z cmaujean $
-#
-
 require 'rfile/randomstack'
 require 'rfile/indexelement'
 
