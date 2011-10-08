@@ -102,5 +102,3 @@ class RFile
 end
 
 require 'rfile/version'
-
-# vi:sw=2 ts=2

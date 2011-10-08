@@ -29,5 +29,3 @@ class IndexElement
     [@length,@offset,@linum]
   end
 end
-
-# vi:sw=2 ts=2
