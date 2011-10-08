@@ -1,10 +1,9 @@
 require 'spec_helper'
-require File.expand_path(File.dirname(__FILE__) + "/../lib/rfile.rb")
 
 TESTDATA = File.expand_path(File.dirname(__FILE__) + "/data" )
 describe RFile do
   describe "#randomline" do
-    before do
+    before :each do
       @f = RFile.new("#{TESTDATA}/testfile")
     end
     
@@ -17,6 +16,7 @@ describe RFile do
     end
     
   end
+  
   describe "#line do" do
     before do
       @f = RFile.new("#{TESTDATA}/testfile")
@@ -27,9 +27,10 @@ describe RFile do
   end
 
   describe "enumeration mixin" do
-    before do
+    before :each do
       @f = RFile.new("#{TESTDATA}/testenummixin")
     end
+    
     describe "each" do
       it "returns the lines in the file, in order" do
         count = 0
@@ -44,24 +45,36 @@ describe RFile do
         @f.detect {|t| t.split(" ")[1].to_i == 3}.should == "Line 3"
       end
     end
+    
     describe "reject" do
       it "returns the unrejected lines" do
         @f.reject {|t| t == "Line 3"}.should == ["Line 1", "Line 2"]
       end
     end
+    
     describe "collect" do
       it "returns the collected lines" do
         @f.collect {|t| "This is " + t }.should == ["This is Line 1", "This is Line 2", "This is Line 3"]
       end
     end
   end
-  describe "recycle == true" do
-    it "recycles the file when the data is 'used up'" do
+  
+  describe "recycle" do
+    
+    it "recycles the file when the data is 'used up' when recycle == true" do
       g = RFile.new("#{TESTDATA}/testfile", true)
       5.downto 0 do
         g.randomline
       end
       valid_line(g.randomline).should be_true
+    end
+    
+    it "does not recycle the file when the data is 'used up' when recycle == false" do
+      g = RFile.new("#{TESTDATA}/testfile", false)
+      5.downto 0 do
+        g.randomline
+      end
+      valid_line(g.randomline).should be_false
     end
   end
   
@@ -76,19 +89,21 @@ describe RFile do
   end
   
   describe "r_eof?" do
+    before :each do
+      @f = RFile.new("#{TESTDATA}/testfile")
+    end
+    
     it "should return true when the file is at eof" do
-      f = RFile.new("#{TESTDATA}/testfile")
       3.downto 1 do
-        f.randomline
+        @f.randomline
       end
-      f.r_eof?.should be_true
+      @f.r_eof?.should be_true
     end
     it "should return false when the file has remaining lines" do
-      f = RFile.new("#{TESTDATA}/testfile")
       3.downto 2 do
-        f.randomline
+        @f.randomline
       end
-      f.r_eof?.should be_false
+      @f.r_eof?.should be_false
     end
   end
 
@@ -118,4 +133,3 @@ describe RFile do
     end
   end
 end
-# vi:sw=2 ts=2
