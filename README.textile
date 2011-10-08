@@ -1,0 +1,48 @@
+h1. RFile 
+
+"Travis":http://travis-ci.org build status: !https://secure.travis-ci.org/cmaujean/rfile.png!
+
+A read only file class, providing random line based access to a large file without loading the whole file into memory.
+
+h2. Synopsis
+
+<code>
+  require 'rfile'
+  f = RFile.new('path/to/some/file')
+  
+  f.line(6) #=> "the 6th line in the file"
+  
+  f.each do |l|
+    # ordered iteration of each line in the file (IO intensive)
+  end
+  
+  # lines returned by randomline mehtods are "consumed" and will not be seen in future calls
+  # if recycle == true, then once all lines have been seen, the index is reset
+  # and all lines will again be available
+  f.randomline #=> "a random line from the file"
+  f.randomlines(3) #=> ["a random line", "another random line", "again, a random line"]
+  r.length #=> the number of lines available to randomline methods before the end, or before recycling
+  r.r_eof #=> true if all lines have been seen
+</code>
+
+h2. new(path, recycle, sep_string)
+
+@f = RFile.new('path/to/file', true, "\n")@
+
+h3. path
+
+the path to an existing file
+
+h3. recycle
+
+boolean value, if true the randomline method will reload the index (fast) when it runs out of unique lines to produce
+
+h3. sep_string
+
+the string that determines what is a line
+
+h2. Credits
+
+Author: Christopher Maujean <cmaujean@gmail.com>
+
+Contributors: Erik Hollensebe
