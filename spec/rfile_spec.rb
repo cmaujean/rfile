@@ -25,72 +25,97 @@ describe RFile do
       @f.line(1).should == "Line 1"
     end
   end
+
+  describe "enumeration mixin" do
+    before do
+      @f = RFile.new("#{TESTDATA}/testenummixin")
+    end
+    describe "each" do
+      it "returns the lines in the file, in order" do
+        count = 0
+        @f.each_with_index do |l,i|
+          l.should == "Line #{i+1}"
+        end
+      end
+    end
+    
+    describe "detect" do
+      it "returns the detected line" do
+        @f.detect {|t| t.split(" ")[1].to_i == 3}.should == "Line 3"
+      end
+    end
+    describe "reject" do
+      it "returns the unrejected lines" do
+        @f.reject {|t| t == "Line 3"}.should == ["Line 1", "Line 2"]
+      end
+    end
+    describe "collect" do
+      it "returns the collected lines" do
+        @f.collect {|t| "This is " + t }.should == ["This is Line 1", "This is Line 2", "This is Line 3"]
+      end
+    end
+  end
+  describe "recycle == true" do
+    it "recycles the file when the data is 'used up'" do
+      g = RFile.new("#{TESTDATA}/testfile", true)
+      5.downto 0 do
+        g.randomline
+      end
+      valid_line(g.randomline).should be_true
+    end
+  end
+  
+  describe "#length" do
+    it "returns the remaining number of lines in the file" do
+      f = RFile.new("#{TESTDATA}/testfile")
+      f.length.should == 3
+      lambda {
+        f.randomline
+      }.should change(f, :length).by(-1)
+    end
+  end
+  
+  describe "r_eof?" do
+    it "should return true when the file is at eof" do
+      f = RFile.new("#{TESTDATA}/testfile")
+      3.downto 1 do
+        f.randomline
+      end
+      f.r_eof?.should be_true
+    end
+    it "should return false when the file has remaining lines" do
+      f = RFile.new("#{TESTDATA}/testfile")
+      3.downto 2 do
+        f.randomline
+      end
+      f.r_eof?.should be_false
+    end
+  end
+
+  describe "randomlines" do
+    before :each do
+      @f = RFile.new("#{TESTDATA}/testfile")
+    end
+    
+    it "handles block form and processes the number of lines requested" do
+      @f.randomlines(2) do |line|
+        valid_line(line).should be_true
+      end
+    end
+    
+    it "handles array form and returns the number of lines requested" do
+      arr = @f.randomlines(2)
+      arr.each do |line|
+        valid_line(line).should be_true
+      end
+    end
+  end
+  
+  describe "separator string works" do
+    it "properly handles alternate separator strings" do
+      f = RFile.new("#{TESTDATA}/sep_string_test", false, "--")
+      f.line(4).should == "\nso here we see if this is line 4 or not.\n\n"
+    end
+  end
 end
-
-  # 
-  # 
-  # describe "enumeration mixin" do
-  #   it "returns all of the lines in the file, in order"
-  #   g = RFile.new("rfile/test/data/testenummixin")
-  #   count = 0
-  #   g.each_with_index do |l,i|
-  #       assert_equal "Line 1", l
-  #       assert_equal "Line 2", l
-  #       assert_equal "Line 3", l
-  #   end
-  #   assert count == 3, "EACH TEST: count should be 3 count is #{count}"
-  # 
-  #   assert( "Line 3" == @f.detect {|t| t.split(" ")[1].to_i == 3}, "Enum: testing detect { } " )
-  #   assert( @f.reject {|t| t == "Line 3"} == ["Line 1", "Line 2"], "Enum: testing reject { }" )
-  #   assert( @f.collect {|t| "This is " + t } == ["This is Line 1", "This is Line 2", "This is Line 3"], "Enum: testing collect")
-  # end
-  # 
-  # def test_recycle
-  #   g = RFile.new("rfile/test/data/testfile", true)
-  #   5.downto 0 do
-  #     g.randomline
-  #   end
-  #   assert valid_line(g.randomline), "Recycle failed"
-  # end
-  # 
-  # def test_length
-  #   f = RFile.new("rfile/test/data/testfile")
-  #   f.randomline
-  #   assert_equal 2, f.length, "Length should be 2"
-  # end
-  # 
-  # def test_r_eof
-  #   f = RFile.new("rfile/test/data/testfile")
-  #   3.downto 1 do
-  #     f.randomline
-  #   end
-  #   assert f.r_eof?, "length is #{f.length}"
-  # end
-  # 
-  # def test_randomlines
-  #   f = RFile.new("rfile/test/data/testfile")
-  # 
-  #   # test block form
-  #   f.randomlines(2) do |line|
-  #     assert(valid_line(line), "Randomlines block form: #{line}")
-  #   end
-  # 
-  #   g = RFile.new("rfile/test/data/testfile")
-  # 
-  #   # test array form
-  #   arr = g.randomlines(2)
-  #   arr.each do |line|
-  #     assert(valid_line(line), "Randomlines array form: #{line}")
-  #   end
-  # end
-  # 
-  # def test_sep_string
-  #   f = RFile.new("rfile/test/data/sep_string_test", false, "--")
-  #   assert_equal "\nso here we see if this is line 4 or not.\n\n", f.line(4), "is: #{f.line(4)}"
-  # end
-
-def valid_line(line)
-  ["Line 1", "Line 2", "Line 3"].include? line
-end
-
 # vi:sw=2 ts=2
