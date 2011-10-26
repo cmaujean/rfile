@@ -8,7 +8,7 @@ h2. Synopsis
 
 ARGH. It seems I can't embed a gist in my README, even though said gist and said README are on github. 
 
-So, until I can, the "synopsis is over here":https://gist.github.com/1315533.js?file=synopsis.rb.
+So, until I can, the "synopsis is over here":https://gist.github.com/1315533.
 
 h2. Usage
 
