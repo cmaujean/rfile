@@ -6,43 +6,40 @@ A read only file class, providing random line based access to a large file witho
 
 h2. Synopsis
 
-<code>
-  require 'rfile'
-  f = RFile.new('path/to/some/file')
-  
-  f.line(6) #=> "the 6th line in the file"
-  
-  f.each do |l|
-    # ordered iteration of each line in the file (IO intensive)
-  end
-  
-  # lines returned by randomline mehtods are "consumed" and will not be seen in future calls
-  # if recycle == true, then once all lines have been seen, the index is reset
-  # and all lines will again be available
-  f.randomline #=> "a random line from the file"
-  f.randomlines(3) #=> ["a random line", "another random line", "again, a random line"]
-  r.length #=> the number of lines available to randomline methods before the end, or before recycling
-  r.r_eof #=> true if all lines have been seen
-</code>
+<script src="https://gist.github.com/1315533.js?file=synopsis.rb"></script>
 
-h2. new(path, recycle, sep_string)
+h2. Usage
 
-@f = RFile.new('path/to/file', true, "\n")@
+h3. new(path, recycle, sep_string)
 
-h3. path
+@rfile = RFile.new('path/to/file', true, "\n")@
 
-the path to an existing file
+*path*: the path to an existing file
 
-h3. recycle
+*recycle*: boolean value, if true the randomline method will reload the index (fast) when it runs out of unique lines to produce
 
-boolean value, if true the randomline method will reload the index (fast) when it runs out of unique lines to produce
+*sep_string*: the string that determines what a line is, lines returned by the methods do not include the separator
 
-h3. sep_string
+h3. randomline
 
-the string that determines what is a line
+a random line from the file (or nil if no lines are left and recycle == false)
+
+h3. randomlines(num)
+
+an array of random lines with _num_ elements
+
+h3. line(line_number)
+
+the specific line at <span style="font-style: italic;">line_number</span>
+
+h3. Also, the Enumerable module is mixed in, so you get a bunch of that stuff as well.
 
 h2. Credits
 
-Author: Christopher Maujean <cmaujean@gmail.com>
+h3. Author: 
 
-Contributors: Erik Hollensebe
+Christopher Maujean <cmaujean@gmail.com>
+
+h3. Contributors: 
+
+"Erik Hollensebe":https://github.com/erikh
